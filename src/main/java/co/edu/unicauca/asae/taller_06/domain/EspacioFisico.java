@@ -28,4 +28,8 @@ public class EspacioFisico {
     /** @brief Capacidad del espacio (nullable según esquema). */
     @Column(name = "capacidad")
     private Integer capacidad;
+
+    // >>> Requisito del taller 2: poder actualizar solo el estado <<<
+    @Column(name = "activo", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 1")
+    private boolean activo = true;
 }

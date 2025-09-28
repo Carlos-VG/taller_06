@@ -70,6 +70,36 @@ public class Taller06Application implements CommandLineRunner {
 		// // 6) Eliminar curso
 		// eliminarCurso(2);
 
+		/*
+		 * ===========================
+		 * PUNTOS TALLER 6
+		 * ===========================
+		 */
+
+		// 1) SOLA TABLA (keywords)
+		invocar_findEspaciosPorPatronYCapacidad();
+
+		// 2) RELACIONADAS (keywords por nombre de asignatura)
+		invocar_findCursosPorNombreDeAsignatura();
+
+		// 3) RELACIONADAS (franjas por id de curso)
+		invocar_findFranjasPorCursoId();
+
+		// 4) JPQL (ocupación de espacio)
+		invocar_countOcupacionEspacio();
+
+		// 5) SQL NATIVA (ocupación de docente)
+		invocar_countOcupacionDocente();
+
+		// 6) JOIN múltiple (detalle franjas/curso/espacio)
+		invocar_obtenerDetalleFranjasCurso();
+
+		// 7) UPDATE (estado activo/inactivo de espacio físico)
+		invocar_actualizarEstadoEspacio();
+
+		// 8) DELETE (eliminar franjas por curso)
+		invocar_eliminarFranjasPorCurso();
+
 	}
 
 	// ===========================
@@ -262,6 +292,120 @@ public class Taller06Application implements CommandLineRunner {
 
 		cursoRepo.delete(c); // cascada REMOVE + orphanRemoval sobre las franjas
 		System.out.println("== Curso y franjas eliminados ==");
+	}
+
+	/*
+	 * ===========================
+	 * PUNTOS TALLER 6
+	 * ===========================
+	 */
+
+	/*
+	 * ===========================
+	 * 1) SOLA TABLA (keywords)
+	 * ===========================
+	 */
+	private void invocar_findEspaciosPorPatronYCapacidad() {
+		List<EspacioFisico> lista = this.espacioRepo
+				.findByNombreStartingWithIgnoreCaseAndCapacidadGreaterThanEqualOrderByNombreAsc("A", 20);
+		System.out.println("[1] Espacios (patrón='A', capacidad>=20, orden nombre ASC)");
+		for (EspacioFisico e : lista) {
+			System.out.println("  - id=" + e.getId() + " | nombre=" + e.getNombre()
+					+ " | capacidad=" + e.getCapacidad());
+		}
+	}
+
+	/*
+	 * ===========================================
+	 * 2) RELACIONADAS (por nombre de asignatura)
+	 * ===========================================
+	 */
+	private void invocar_findCursosPorNombreDeAsignatura() {
+		List<Curso> cursos = this.cursoRepo.findByAsignatura_NombreIgnoreCase("Bases de Datos II");
+		System.out.println("[2] Cursos por asignatura = 'Bases de Datos II'");
+		for (Curso c : cursos) {
+			System.out.println("  - id=" + c.getId() + " | curso=" + c.getNombre());
+		}
+	}
+
+	/*
+	 * ======================================
+	 * 3) RELACIONADAS (franjas por curso id)
+	 * ======================================
+	 */
+	private void invocar_findFranjasPorCursoId() {
+		int cursoId = 1;
+		List<FranjaHoraria> franjas = this.franjaRepo.findByCurso_Id(cursoId);
+		System.out.println("[3] Franjas del curso id=" + cursoId + " (con curso+espacio en fetch)");
+		for (FranjaHoraria f : franjas) {
+			System.out.println("  - franja#" + f.getId() + " | " + f.getDia()
+					+ " " + f.getHoraInicio() + "-" + f.getHoraFin()
+					+ " | curso=" + f.getCurso().getNombre()
+					+ " | espacio=" + f.getEspacioFisico().getNombre());
+		}
+	}
+
+	/*
+	 * ============================================
+	 * 4) JPQL (ocupación de un espacio específico)
+	 * ============================================
+	 */
+	private void invocar_countOcupacionEspacio() {
+		long count = this.franjaRepo.countOcupacionEspacio(
+				DiaSemana.LUNES, LocalTime.of(8, 0), LocalTime.of(9, 0), 1);
+		System.out.println("[4] Ocupación espacio(id=1) LUNES 08:00-09:00 => " + count + " franja(s)");
+	}
+
+	/*
+	 * =========================================
+	 * 5) SQL NATIVA (ocupación de un docente)
+	 * =========================================
+	 */
+	private void invocar_countOcupacionDocente() {
+		long count = this.franjaRepo.countOcupacionDocente(
+				"LUNES", LocalTime.of(8, 0), LocalTime.of(9, 0), 2);
+		System.out.println("[5] Ocupación docente(id=2) LUNES 08:00-09:00 => " + count + " franja(s)");
+	}
+
+	/*
+	 * ==========================================================
+	 * 6) JOIN múltiple (curso–franja–espacio) detalle combinado
+	 * ==========================================================
+	 */
+	private void invocar_obtenerDetalleFranjasCurso() {
+		int cursoId = 1;
+		List<Object[]> filas = this.franjaRepo.obtenerDetalleFranjasCurso(cursoId);
+		System.out.println("[6] Detalle franjas del curso id=" + cursoId + " (JOIN curso+espacio)");
+		for (Object[] r : filas) {
+			// f.id, f.dia, f.horaInicio, f.horaFin, c.id, c.nombre, e.id, e.nombre,
+			// e.capacidad
+			System.out.println("  - franja#" + r[0] + " | " + r[1] + " " + r[2] + "-" + r[3]
+					+ " | curso=(" + r[4] + ", " + r[5] + ")"
+					+ " | espacio=(" + r[6] + ", " + r[7] + ", cap=" + r[8] + ")");
+		}
+	}
+
+	/*
+	 * =========================================================
+	 * 7) UPDATE (modificar solo estado del espacio físico)
+	 * =========================================================
+	 */
+	@Transactional(readOnly = false)
+	private void invocar_actualizarEstadoEspacio() {
+		int afectados = this.espacioRepo.actualizarEstado(1, false);
+		System.out.println("[7] UPDATE estado espacio(id=1 -> activo=false) => filas afectadas: " + afectados);
+	}
+
+	/*
+	 * ================================================
+	 * 8) DELETE (eliminar franjas de un curso por id)
+	 * ================================================
+	 */
+	@Transactional(readOnly = false)
+	private void invocar_eliminarFranjasPorCurso() {
+		int cursoId = 1;
+		int eliminadas = this.franjaRepo.eliminarFranjasPorCursoId(cursoId);
+		System.out.println("[8] DELETE franjas del curso id=" + cursoId + " => filas eliminadas: " + eliminadas);
 	}
 
 }

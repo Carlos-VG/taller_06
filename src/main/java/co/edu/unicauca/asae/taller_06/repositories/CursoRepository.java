@@ -52,4 +52,8 @@ public interface CursoRepository extends JpaRepository<Curso, Integer> {
     @EntityGraph(attributePaths = { "franjas", "franjas.espacioFisico" })
     @NonNull
     Optional<Curso> findWithFranjasById(@NonNull Integer id);
+
+    // PUNTO 2 TALLER 6) (RELACIONADAS, keywords) cursos por nombre de asignatura
+    // (ignore case)
+    List<Curso> findByAsignatura_NombreIgnoreCase(String nombreAsignatura);
 }
