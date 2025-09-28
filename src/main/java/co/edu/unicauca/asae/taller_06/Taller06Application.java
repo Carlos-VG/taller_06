@@ -38,6 +38,12 @@ public class Taller06Application implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
+		/*
+		 * ===========================
+		 * PUNTOS TALLER 5
+		 * ===========================
+		 */
+
 		// // 1) Crear Docente + Oficina con un solo save (correo y oficina distintos)
 		// crearDocenteConOficinaUnSoloSave(
 		// "María", "Lozano", "maria.lozano@unicauca.edu.co",
@@ -67,38 +73,44 @@ public class Taller06Application implements CommandLineRunner {
 		// // 5) Consultar franjas por docente
 		// consultarFranjasPorDocente(2);
 
-		// // 6) Eliminar curso
-		// eliminarCurso(2);
-
 		/*
 		 * ===========================
 		 * PUNTOS TALLER 6
 		 * ===========================
 		 */
 
-		// 1) SOLA TABLA (keywords)
-		invocar_findEspaciosPorPatronYCapacidad();
+		// // 1) SOLA TABLA (keywords)
+		// invocar_findEspaciosPorPatronYCapacidad();
 
-		// 2) RELACIONADAS (keywords por nombre de asignatura)
-		invocar_findCursosPorNombreDeAsignatura();
+		// // 2) RELACIONADAS (keywords por nombre de asignatura)
+		// invocar_findCursosPorNombreDeAsignatura();
 
-		// 3) RELACIONADAS (franjas por id de curso)
-		invocar_findFranjasPorCursoId();
+		// // 3) RELACIONADAS (franjas por id de curso)
+		// invocar_findFranjasPorCursoId();
 
-		// 4) JPQL (ocupación de espacio)
-		invocar_countOcupacionEspacio();
+		// // 4) JPQL (ocupación de espacio)
+		// invocar_countOcupacionEspacio();
 
-		// 5) SQL NATIVA (ocupación de docente)
-		invocar_countOcupacionDocente();
+		// // 5) SQL NATIVA (ocupación de docente)
+		// invocar_countOcupacionDocente();
 
-		// 6) JOIN múltiple (detalle franjas/curso/espacio)
-		invocar_obtenerDetalleFranjasCurso();
+		// // 6) JOIN múltiple (detalle franjas/curso/espacio)
+		// invocar_obtenerDetalleFranjasCurso();
 
-		// 7) UPDATE (estado activo/inactivo de espacio físico)
-		invocar_actualizarEstadoEspacio();
+		// // 7) UPDATE (estado activo/inactivo de espacio físico)
+		// invocar_actualizarEstadoEspacio();
 
-		// 8) DELETE (eliminar franjas por curso)
-		invocar_eliminarFranjasPorCurso();
+		// // 8) DELETE (eliminar franjas por curso)
+		// invocar_eliminarFranjasPorCurso();
+
+		/*
+		 * ===========================
+		 * PUNTO TALLER 5
+		 * ===========================
+		 */
+
+		// // 6) Eliminar curso
+		// eliminarCurso(2);
 
 	}
 
